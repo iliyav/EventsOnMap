@@ -1,0 +1,56 @@
+{
+	_id: "0738232e-9220-4baf-a4f1-177c2fb99b08",
+	owner: "afd1751d-9d66-4c6e-b5eb-ee4e5f22b18b",
+	lon: 82.925042102814,
+	lat: 55.030350564569,
+	address: "630099, Красный проспект, 36",
+	startd: 1359367200,
+	stopd: 1359377200,
+	title: "Тестовое событие",
+	description: "Описание тестового события",
+	public: true,
+	invited: [],
+	rsvps: [],
+	comments: []
+},
+{
+	_id: "0738232e-9220-4baf-a4f1-177c2fb99b09",
+	owner: "afd1751d-9d66-4c6e-b5eb-ee4e5f22b18b",
+	lon: 82.9,
+	lat: 55.030350564569,
+	address: "630099, Красный проспект, 36",
+	startd: 1359367200,
+	stopd: 1359377200,
+	title: "Тестовое событие 2",
+	description: "Описание тестового события 2",
+	public: true,
+	invited: [],
+	rsvps: [],
+	comments: []
+},
+{
+	_id: "0738232e-9220-4baf-a4f1-177c2fb99b10",
+	owner: "afd1751d-9d66-4c6e-b5eb-ee4e5f22b18b",
+	lon: 82.9,
+	lat: 55,
+	address: "630099, Красный проспект, 36",
+	startd: 1359367200,
+	stopd: 1359377200,
+	title: "Тестовое событие 3",
+	description: "Описание тестового события 3",
+	public: true,
+	invited: [],
+	rsvps: [],
+	comments: []
+}
+
+[
+	{
+		author:'TestUser1',
+		comment: 'First comment'
+	},
+	{
+		author:'TestUser2',
+		comment: 'Second comment'
+	}
+]

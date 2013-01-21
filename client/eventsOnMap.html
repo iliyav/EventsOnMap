@@ -1,0 +1,228 @@
+<head>
+  <title>eventsOnMap</title>
+  <script type="text/javascript" src="http://maps.api.2gis.ru/1.0"></script>
+</head>
+
+<body>
+  {{> page}}
+</body>
+
+<template name="page">
+  {{#if showCreateDialog}}
+    {{> createDialog}}
+  {{/if}}
+
+  {{#if showInviteDialog}}
+    {{> inviteDialog}}
+  {{/if}}
+
+  <div class="container">
+    <div class="row">
+      <div class="span1"> </div>
+
+      <div class="span10">
+        <div class="header row">
+          <div class="span5">
+            <h3 style="margin-bottom: 0px">Events on map</h3>
+          </div>
+          <div class="span5">
+            <div style="float: right">
+              {{loginButtons align="right"}}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span6">
+            {{> map}}
+          </div>
+          <div class="span4">
+            {{> details}}
+          </div>
+        </div>
+      </div>
+
+      <div class="span1"> </div>
+    </div>
+  </div>
+</template>
+
+<template name="details">
+  <div class="details">
+    {{#if event}}
+      {{#with event}}
+        <h1>{{title}}</h1>
+        <p><small>Posted by {{creatorName}}</small></p>
+
+        <div class="description">{{description}}</div>
+        <div class="schedule">
+          From: {{unixDate startd}}<br>
+          Till: {{unixDate stopd}}
+        </div>
+        <address>
+          Address: {{address}}
+        </address>
+
+        {{> attendance}}
+
+        <div class="rsvp-buttons">
+          {{#if currentUser}}
+            <input type="button" value="I'm going!"
+                   class="btn btn-small rsvp_yes {{maybeChosen "yes"}}">
+            <input type="button" value="Maybe"
+                   class="btn btn-small rsvp_maybe {{maybeChosen "maybe"}}">
+            <input type="button" value="No"
+                   class="btn btn-small rsvp_no {{maybeChosen "no"}}">
+          {{else}}
+            <i>Sign in to Reply for this event.</i>
+          {{/if}}
+        </div>
+        <br>
+        <div class="comments">
+          Comments:
+          {{#if comments}}
+          <ul class="unstyled">
+            {{#each comments}}
+                <li class="well well-small">{{comment}} - {{author}}</li>
+            {{/each}}
+          </ul>
+          {{else}}
+            <i>No comments yet...</i>
+          {{/if}}
+          {{#if currentUser}}
+          <textarea id="new-comment"></textarea><br>
+          <button id="add-comment" class="btn btn-primary" type="button">Add comment</button>
+          {{else}}
+            <i>Sign in to post a comment for this event.</i>
+          {{/if}}
+        </div>
+
+
+        {{#if canRemove}}
+          <div class="alert alert-info"><small>
+              You posted this event and nobody is signed up to go, so if
+              you like, you could
+              <b><a href="#" class="remove">delete this listing</a></b>.
+          </small></div>
+        {{/if}}
+      {{/with}}
+    {{else}}
+      <h1 class="muted pagination-centered">
+        {{#if anyEvents}}
+          Click an event to select it
+        {{else}}
+          Sign in and add an event
+        {{/if}}
+      </h1>
+    {{/if}}
+  </div>
+</template>
+
+<template name="map">
+  {{#constant}}
+    <div id="2gis-map" style="width:500px; height:400px"></div>
+  {{/constant}}
+</template>
+
+<template name="attendance">
+  <div class="attendance well well-small">
+    <div class="muted who"><b>Who</b></div>
+    {{#if public}}
+      <div>
+        <b>Everyone</b>
+        <span class="label label-inverse pull-right">Invited</span>
+      </div>
+    {{/if}}
+
+    {{#each rsvps}}
+      <div>
+        {{rsvpName}}
+        {{#if rsvpIs "yes"}}
+          <span class="label label-success pull-right">Going</span>
+        {{/if}}
+        {{#if rsvpIs "maybe"}}
+          <span class="label label-info pull-right">Maybe</span>
+        {{/if}}
+        {{#if rsvpIs "no"}}
+          <span class="label label pull-right">No</span>
+        {{/if}}
+      </div>
+    {{/each}}
+
+    {{#unless public}}
+      {{#each outstandingInvitations}}
+        <div>
+          {{invitationName}}
+          <span class="label label-inverse pull-right">Invited</span>
+        </div>
+      {{/each}}
+    {{/unless}}
+
+    {{#if nobody}}
+      <div>Nobody.</div>
+    {{/if}}
+
+    {{#if canInvite}}
+      <div class="invite">
+        <a href="#" class="btn btn-mini invite">Invite people</a>
+      </div>
+    {{/if}}
+  </div>
+</template>
+
+<template name="createDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close cancel">&times;</button>
+      <h3>Add party</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+
+      <label>Title</label>
+      <input type="text" class="title span5">
+
+      <label>Description</label>
+      <textarea class="description span5"></textarea>
+
+      <label class="checkbox">
+        <input type="checkbox" class="private">
+        Private party &mdash; invitees only
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Add party</a>
+    </div>
+  </div>
+</template>
+
+<template name="inviteDialog">
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close done">&times;</button>
+      <h3>Invite people</h3>
+    </div>
+
+    <div class="modal-body">
+      {{#each uninvited}}
+        <div class="invite-row">
+          <a href="#" class="btn invite">Invite</a>
+          {{displayName}}
+        </div>
+      {{else}}
+        Everyone on the site has already been invited.
+      {{/each}}
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn btn-primary done">Done</a>
+    </div>
+  </div>
+</template>
